@@ -1,58 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TaskManager — Laravel MVP
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Application de gestion de tâches interne pour équipes. Chaque utilisateur dispose d'un espace isolé pour créer, organiser et suivre ses tâches quotidiennes.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Stack technique
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework** : Laravel 13
+- **Base de données** : MySQL
+- **Templating** : Blade
+- **Auth** : Laravel Breeze
+- **Debug** : Laravel Debugbar + Laravel Telescope
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Prérequis
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Avant de commencer, assurez-vous d'avoir installé :
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP >= 8.4
+- Composer
+- Node.js >= 18 & npm
+- MySQL
+- Laravel Herd (ou un serveur local équivalent)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Installation
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Cloner le dépôt
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/Pro-joseph/task-manager.git
+cd task-manager
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Installer les dépendances PHP
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Installer les dépendances JavaScript
 
-## Code of Conduct
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Configurer l'environnement
 
-## Security Vulnerabilities
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Ouvrez `.env` et renseignez vos informations de base de données :
 
-## License
+```env
+APP_NAME=TaskManager
+APP_URL=http://localhost:8000
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=task_manager
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Créer la base de données
+
+Dans MySQL, créez la base de données :
+
+```sql
+CREATE DATABASE task_manager;
+```
+
+### 6. Exécuter les migrations et les seeders
+
+```bash
+php artisan migrate --seed
+```
+
+### 7. Compiler les assets
+
+```bash
+npm run dev
+```
+
+### 8. Lancer le serveur
+
+```bash
+php artisan serve
+```
+
+---
+
+## Outils de debug
+
+### Laravel Debugbar
+
+Actif automatiquement en environnement `local`. Visible en bas de chaque page — affiche les requêtes SQL, le temps d'exécution et les éventuels problèmes N+1.
+
+### Laravel Telescope
+
+Accessible sur [http://localhost:8000/telescope](http://localhost:8000/telescope)
+
+Permet d'inspecter chaque requête HTTP : payload reçu, queries SQL associées, exceptions levées.
+
+> Telescope n'est actif qu'en environnement `local`.
+
+---
+
+## Comptes de test
+
+Après `php artisan migrate --seed`, les comptes suivants sont disponibles :
+
+| Email | Mot de passe | Rôle |
+|---|---|---|
+| user@example.com | password | Utilisateur |
+
+---
+
+## Fonctionnalités
+
+- Inscription / Connexion / Déconnexion
+- Création, modification, suppression de tâches
+- Statuts : À faire / En cours / Terminé
+- Filtrage par statut et par catégorie
+- Changement de statut rapide depuis la liste
+- Date d'échéance avec alerte visuelle si dépassée
+- Pagination (4 tâches par page)
+- Compteur de tâches par statut sur le dashboard
+- Isolation totale entre utilisateurs
+
+---
+
+## Structure des branches Git
+
+```
+main
+├── feature/auth
+├── feature/task-crud
+└── feature/filters
+```
+
+---
+
+## Commandes utiles
+
+```bash
+# Voir toutes les routes nommées
+php artisan route:list
+
+# Relancer les migrations avec données de test
+php artisan migrate:fresh --seed
+
+# Vider le cache de configuration
+php artisan config:clear
+
+# Installer Telescope
+php artisan telescope:install
+php artisan migrate
+```
+
+---
+
+## MLD
+
+```
+users       (id, name, email, password, created_at, updated_at)
+categories  (id, nom, created_at, updated_at)
+tasks      (id, titre, description, statut, due_date, created_at, updated_at,
+             user_id FK→users, categorie_id FK→categories)
+```
