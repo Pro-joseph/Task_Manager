@@ -1,3 +1,4 @@
+<div class="pl-64">
  <!-- TopNavBar -->
  <header
      class="h-16 w-full sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-6">
@@ -30,3 +31,4 @@
          </div>
      </div>
  </header>
+ </div>

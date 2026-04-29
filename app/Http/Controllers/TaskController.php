@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\task;
+use App\Models\Task;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -13,7 +13,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = \App\Models\Task::where('user_id', auth()->id())
+        $tasks = Task::where('user_id', auth()->id())
                     ->with('categorie')
                     ->latest()
                     ->get();
