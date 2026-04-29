@@ -12,6 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo('/login');
+        $middleware->alias([
+            'auth.custom' => \App\Http\Middleware\CheckAuth::class,
+            'checkform' => \App\Http\Middleware\Checkform::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

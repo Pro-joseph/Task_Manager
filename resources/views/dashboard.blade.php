@@ -157,7 +157,7 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 class="font-h1 text-h1 text-on-surface">Dashboard Overview</h2>
-                    <p class="font-body-md text-on-surface-variant">Welcome back, Alex. You have 4 high-priority tasks
+                    <p class="font-body-md text-on-surface-variant">Welcome back, Alex. You have {{ $tasks->where('status', 'todo')->count() }} high-priority tasks
                         due today.</p>
                 </div>
                 <div class="flex items-center gap-3">
@@ -194,8 +194,8 @@
                         </div>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <h3 class="font-h1 text-h1 text-on-surface">12</h3>
-                        <span class="text-caption text-error font-semibold">+2 today</span>
+                        <h3 class="font-h1 text-h1 text-on-surface">{{ $tasks->where('status', 'todo')->count() }}</h3>
+                        <span class="text-caption text-error font-semibold">{{ $tasks->where('status', 'todo')->count() }} tasks</span>
                     </div>
                     <p class="text-body-sm text-on-surface-variant mt-2">Requires immediate attention</p>
                 </div>
@@ -215,7 +215,7 @@
                         </div>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <h3 class="font-h1 text-h1 text-on-surface">08</h3>
+                        <h3 class="font-h1 text-h1 text-on-surface">{{ $tasks->where('status', 'in_progress')->count() }}</h3>
                         <span class="text-caption text-tertiary-fixed-dim font-semibold">Active now</span>
                     </div>
                     <p class="text-body-sm text-on-surface-variant mt-2">Steady momentum maintained</p>
@@ -234,8 +234,8 @@
                         </div>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <h3 class="font-h1 text-h1 text-on-surface">45</h3>
-                        <span class="text-caption text-primary font-semibold">↑ 12% vs last week</span>
+                        <h3 class="font-h1 text-h1 text-on-surface">{{ $tasks->where('status', 'completed')->count() }}</h3>
+                        <span class="text-caption text-primary font-semibold">Completed</span>
                     </div>
                     <p class="text-body-sm text-on-surface-variant mt-2">Productivity target met</p>
                 </div>
@@ -243,156 +243,45 @@
             <!-- Task Focus Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
                 <!-- Recent Tasks / Focus -->
-                <div class="lg:col-span-2 space-y-6">
+                <div class="lg:col-span-6 space-y-6">
                     <div class="flex items-center justify-between">
                         <h3 class="font-h3 text-h3 text-on-surface">Upcoming Deadlines</h3>
                         <button class="text-label-sm font-bold text-primary hover:underline">View All Tasks</button>
                     </div>
-                    <div class="space-y-4">
-                        <!-- Task Item (Overdue) -->
+<div class="space-y-4">
+                        @foreach($tasks->take(5) as $task)
                         <div
                             class="bg-white rounded-xl p-md border border-slate-100 flex items-center gap-4 group hover:shadow-md transition-shadow">
                             <div
                                 class="flex-shrink-0 w-12 h-12 rounded-lg bg-error-container/20 flex flex-col items-center justify-center border border-error/10">
-                                <span class="text-[10px] font-bold text-error uppercase">Oct</span>
-                                <span class="text-xl font-bold text-error leading-none">24</span>
+                                <span class="text-[10px] font-bold text-error uppercase">{{ $task->due_date ? $task->due_date->format('M') : 'N/A' }}</span>
+                                <span class="text-xl font-bold text-error leading-none">{{ $task->due_date ? $task->due_date->format('d') : '-' }}</span>
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     <span
-                                        class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-[10px] font-bold uppercase">Overdue</span>
-                                    <h4 class="font-label-md text-on-surface">Q3 Financial Reporting Review</h4>
+                                        class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-[10px] font-bold uppercase">{{ $task->status }}</span>
+                                    <h4 class="font-label-md text-on-surface">{{ $task->title }}</h4>
                                 </div>
-                                <p class="text-caption text-on-surface-variant">Enterprise Ops • Last updated 2 hours
+                                <p class="text-caption text-on-surface-variant">{{ $task->categorie->name ?? 'Uncategorized' }} • Last updated {{ $task->updated_at->diffForHumans() }}
                                     ago</p>
                             </div>
                             <div class="flex items-center gap-4">
                                 <div class="hidden sm:block">
                                     <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-error rounded-full w-3/4"></div>
+                                        <div class="h-full bg-error rounded-full" style="width: {{ $task->progress ?? 0 }}%"></div>
                                     </div>
-                                    <p class="text-[10px] text-right text-on-surface-variant mt-1">75% Complete</p>
+                                    <p class="text-[10px] text-right text-on-surface-variant mt-1">{{ $task->progress ?? 0 }}% Complete</p>
                                 </div>
-                                <button class="p-2 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
+                                <button onclick="openTaskModal({{ $task->id }})" class="p-2 text-slate-400 hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">visibility</span>
                                 </button>
                             </div>
                         </div>
-                        <!-- Task Item -->
-                        <div
-                            class="bg-white rounded-xl p-md border border-slate-100 flex items-center gap-4 group hover:shadow-md transition-shadow">
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex flex-col items-center justify-center border border-primary/5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">Oct</span>
-                                <span class="text-xl font-bold text-on-surface leading-none">28</span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span
-                                        class="px-2 py-0.5 rounded-full bg-surface-variant text-on-primary-fixed-variant text-[10px] font-bold uppercase">In
-                                        Design</span>
-                                    <h4 class="font-label-md text-on-surface">Nexuess UI System Audit</h4>
-                                </div>
-                                <p class="text-caption text-on-surface-variant">Product Design • Assinged to: Sarah M.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="hidden sm:block">
-                                    <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-tertiary-fixed-dim rounded-full w-1/4"></div>
-                                    </div>
-                                    <p class="text-[10px] text-right text-on-surface-variant mt-1">25% Complete</p>
-                                </div>
-                                <button class="p-2 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Task Item -->
-                        <div
-                            class="bg-white rounded-xl p-md border border-slate-100 flex items-center gap-4 group hover:shadow-md transition-shadow">
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex flex-col items-center justify-center border border-primary/5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">Oct</span>
-                                <span class="text-xl font-bold text-on-surface leading-none">31</span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span
-                                        class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase">Planning</span>
-                                    <h4 class="font-label-md text-on-surface">Investor Pitch Deck Finalization</h4>
-                                </div>
-                                <p class="text-caption text-on-surface-variant">Strategy • Collaboration with CEO</p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="hidden sm:block">
-                                    <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-slate-300 rounded-full w-[10%]"></div>
-                                    </div>
-                                    <p class="text-[10px] text-right text-on-surface-variant mt-1">Started</p>
-                                </div>
-                                <button class="p-2 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-                <!-- Activity Sidebar -->
-                <div class="space-y-6">
-                    <h3 class="font-h3 text-h3 text-on-surface">Activity Feed</h3>
-                    <div class="bg-white rounded-xl p-lg shadow-[0_2px_10px_rgba(49,46,129,0.04)] h-full">
-                        <div
-                            class="relative space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-slate-100">
-                            <!-- Feed Item -->
-                            <div class="relative flex gap-4 pl-8">
-                                <div
-                                    class="absolute left-0 w-6 h-6 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center z-10">
-                                    <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
-                                </div>
-                                <div>
-                                    <p class="text-body-sm font-semibold text-on-surface">Sarah updated "UI Kit 2.0"
-                                    </p>
-                                    <p class="text-caption text-on-surface-variant">5 minutes ago</p>
-                                    <div
-                                        class="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-100 text-[13px] text-slate-600 italic">
-                                        "Added new variables for the dark mode transition palette."
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Feed Item -->
-                            <div class="relative flex gap-4 pl-8">
-                                <div
-                                    class="absolute left-0 w-6 h-6 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center z-10">
-                                    <div class="w-2 h-2 rounded-full bg-slate-200"></div>
-                                </div>
-                                <div>
-                                    <p class="text-body-sm text-on-surface"><span class="font-semibold">Michael
-                                            J.</span> marked <span class="font-semibold">Task #402</span> as completed
-                                    </p>
-                                    <p class="text-caption text-on-surface-variant">1 hour ago</p>
-                                </div>
-                            </div>
-                            <!-- Feed Item -->
-                            <div class="relative flex gap-4 pl-8">
-                                <div
-                                    class="absolute left-0 w-6 h-6 rounded-full bg-white border-2 border-error flex items-center justify-center z-10">
-                                    <div class="w-2 h-2 rounded-full bg-error"></div>
-                                </div>
-                                <div>
-                                    <p class="text-body-sm text-on-surface font-semibold">Priority Escalation</p>
-                                    <p class="text-caption text-on-surface-variant">3 hours ago</p>
-                                    <p class="mt-1 text-body-sm text-on-surface-variant">"Mobile Auth Bug" is now
-                                        blocking Development team.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button
-                            class="w-full mt-8 py-3 border border-slate-100 rounded-xl text-label-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors uppercase tracking-widest">
-                            Load Full History
-                        </button>
-                    </div>
-                </div>
+
             </div>
             <!-- Team Projects / Statistics -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
@@ -444,6 +333,100 @@
             </div>
         </div>
     </main>
+
+    <!-- Task Detail Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center" onclick="closeTaskModal(event)">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4" onclick="event.stopPropagation()">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-on-surface" id="modalTitle">Task Details</h3>
+                <button onclick="closeTaskModal()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-slate-400">close</span>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-caption text-slate-500 uppercase tracking-wider">Title</label>
+                    <p class="text-on-surface font-medium" id="modalTaskTitle"></p>
+                </div>
+                <div>
+                    <label class="text-caption text-slate-500 uppercase tracking-wider">Description</label>
+                    <p class="text-on-surface-variant" id="modalTaskDescription"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-caption text-slate-500 uppercase tracking-wider">Category</label>
+                        <p class="text-on-surface" id="modalTaskCategory"></p>
+                    </div>
+                    <div>
+                        <label class="text-caption text-slate-500 uppercase tracking-wider">Status</label>
+                        <span id="modalTaskStatus" class="inline-block px-2 py-1 rounded-md text-xs font-semibold mt-1"></span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-caption text-slate-500 uppercase tracking-wider">Due Date</label>
+                        <p class="text-on-surface" id="modalTaskDueDate"></p>
+                    </div>
+                    <div>
+                        <label class="text-caption text-slate-500 uppercase tracking-wider">Progress</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="modalTaskProgress" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="modalTaskProgressText" class="text-xs text-on-surface-variant"></span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-caption text-slate-500 uppercase tracking-wider">Created</label>
+                    <p class="text-on-surface-variant" id="modalTaskCreated"></p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end gap-3">
+                <a href="#" id="modalEditLink" class="px-4 py-2 bg-primary text-white rounded-lg font-label-sm hover:opacity-90 transition-colors">Edit Task</a>
+                <button onclick="closeTaskModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-label-sm transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = @json($tasks);
+
+        function openTaskModal(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('modalTitle').textContent = task.title;
+            document.getElementById('modalTaskTitle').textContent = task.title;
+            document.getElementById('modalTaskDescription').textContent = task.description || 'No description';
+            document.getElementById('modalTaskCategory').textContent = task.categorie?.nom || 'Uncategorized';
+            document.getElementById('modalTaskDueDate').textContent = task.due_date || 'No due date';
+            document.getElementById('modalTaskCreated').textContent = new Date(task.created_at).toLocaleDateString();
+            document.getElementById('modalTaskProgress').style.width = (task.progress || 0) + '%';
+            document.getElementById('modalTaskProgressText').textContent = (task.progress || 0) + '%';
+
+            const statusEl = document.getElementById('modalTaskStatus');
+            if (task.status === 'todo') {
+                statusEl.textContent = 'To Do';
+                statusEl.className = 'inline-block px-2 py-1 rounded-md text-xs font-semibold bg-red-50 text-error';
+            } else if (task.status === 'in_progress') {
+                statusEl.textContent = 'In Progress';
+                statusEl.className = 'inline-block px-2 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-700';
+            } else {
+                statusEl.textContent = 'Completed';
+                statusEl.className = 'inline-block px-2 py-1 rounded-md text-xs font-semibold bg-green-50 text-green-700';
+            }
+
+            document.getElementById('modalEditLink').href = '/tasks/' + task.id + '/edit';
+            document.getElementById('taskModal').classList.remove('hidden');
+        }
+
+        function closeTaskModal(event) {
+            if (!event || event.target === document.getElementById('taskModal')) {
+                document.getElementById('taskModal').classList.add('hidden');
+            }
+        }
+    </script>
     <!-- FAB -->
     <button
         class="fixed bottom-8 right-8 w-14 h-14 bg-indigo-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
