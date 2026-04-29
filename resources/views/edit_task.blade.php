@@ -12,9 +12,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
     <link rel="stylesheet" href="css/styles.css" />
     <script id="tailwind-config">
         tailwind.config = {
@@ -135,200 +132,168 @@
 </head>
 
 <body class="font-body-md antialiased text-on-background">
-    <!-- SideNavBar Component -->
     <x-sidebar />
-    <!-- Main Content Shell -->
-    <!-- TopNavBar Component -->
     <x-header />
-    <!-- Main Content Area -->
-    <main class="ml-64 p-margin">
-        <div class="max-w-4xl mx-auto">
-            <!-- Breadcrumbs -->
-            <nav class="flex items-center gap-2 mb-lg text-slate-500 font-label-sm">
-                <a class="hover:text-primary transition-colors" href="/tasks">Tasks</a>
-                <span class="material-symbols-outlined text-sm">chevron_right</span>
-                <span class="text-on-surface">Edit Task</span>
-            </nav>
-            <!-- Header Section -->
-            <div class="mb-xl flex items-end justify-between">
-                <div>
-                    <h2 class="font-h1 text-h1 text-on-surface mb-xs">Edit System Architecture</h2>
-                    <p class="font-body-md text-body-md text-slate-500">Update details for the high-priority engineering
-                        task.</p>
-                </div>
-                <div
-                    class="flex items-center gap-sm bg-surface-container-low px-md py-sm rounded-lg border border-outline-variant/30">
-                    <span class="material-symbols-outlined text-indigo-600 text-base"
-                        style="font-variation-settings: 'FILL' 1;">history</span>
-                    <span class="font-label-sm text-slate-600">Last updated 2 hours ago</span>
-                </div>
-            </div>
-            <!-- Bento Layout Form Container -->
-            <div class="grid grid-cols-12 gap-gutter">
-                <!-- Main Form Section (Left) -->
-                <div class="col-span-12 lg:col-span-8 space-y-gutter">
-                    <div
-                        class="bg-surface-container-lowest p-xl rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100/50">
-                        <form class="space-y-lg">
-                            <!-- Title Field -->
-                            <div class="space-y-xs">
-                                <label class="font-label-md text-label-md text-on-surface block" for="title">Task
-                                    Title</label>
-                                <input
-                                    class="w-full px-md py-3 rounded-lg border border-outline-variant bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-md text-on-surface"
-                                    id="title" type="text" value="Redesign System Architecture" />
-                            </div>
-                            <!-- Description Field -->
-                            <div class="space-y-xs">
-                                <label class="font-label-md text-label-md text-on-surface block"
-                                    for="description">Description</label>
-                                <textarea
-                                    class="w-full px-md py-3 rounded-lg border border-outline-variant bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-md text-on-surface resize-none"
-                                    id="description" rows="8">The goal is to modernize the current monolithic structure into a microservices-based approach. We need to focus on scalability, maintainability, and reducing the deployment cold-start times. 
+    <main class="pl-64 min-h-screen">
+        <div class="p-8">
+            <div class="max-w-3xl mx-auto">
+                <nav class="flex items-center gap-2 mb-8 text-slate-500 font-label-sm">
+                    <a class="hover:text-primary transition-colors" href="{{ route('tasks.index') }}">Tasks</a>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    <span class="text-on-surface">Edit Task</span>
+                </nav>
 
-Key objectives:
-- Identify service boundaries
-- Define API contracts (OpenAPI)
-- Plan database migration strategy
-- Ensure backward compatibility</textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- File/Attachment Placeholder Section -->
-                    <div
-                        class="bg-surface-container-lowest p-xl rounded-xl border border-dashed border-outline-variant flex flex-col items-center justify-center text-center py-2xl group hover:bg-slate-50/50 transition-colors cursor-pointer">
-                        <div
-                            class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-md group-hover:bg-indigo-100 transition-colors">
-                            <span
-                                class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">cloud_upload</span>
-                        </div>
-                        <h4 class="font-label-md text-on-surface">Upload attachments</h4>
-                        <p class="font-caption text-slate-500 mt-1">Drag and drop or click to browse files (PDF, JPG,
-                            PNG)</p>
+                <div class="mb-8 flex items-end justify-between">
+                    <div>
+                        <h2 class="font-h1 text-h1 text-on-surface mb-2">Edit Task</h2>
+                        <p class="font-body-md text-on-surface-variant">Update the task details.</p>
                     </div>
                 </div>
-                <!-- Settings/Metadata Section (Right) -->
-                <div class="col-span-12 lg:col-span-4 space-y-gutter">
-                    <!-- Form Controls Sidebar -->
-                    <div
-                        class="bg-surface-container-lowest p-xl rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100/50 space-y-lg">
-                        <!-- Category Dropdown -->
-                        <div class="space-y-xs">
-                            <label class="font-label-md text-label-md text-on-surface block"
-                                for="category">Category</label>
-                            <div class="relative">
-                                <select
-                                    class="w-full appearance-none px-md py-3 rounded-lg border border-outline-variant bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-on-surface cursor-pointer"
-                                    id="category">
-                                    <option selected="" value="engineering">Engineering</option>
-                                    <option value="design">Product Design</option>
-                                    <option value="marketing">Marketing</option>
-                                    <option value="legal">Legal &amp; Compliance</option>
-                                </select>
-                                <span
-                                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-                            </div>
+
+                @if($errors->any())
+                    <div class="mb-6 p-4 bg-error-container border border-error/20 rounded-xl">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-error text-xl">error</span>
+                            <span class="font-label-md text-error font-semibold">Please fix the following errors:</span>
                         </div>
-                        <!-- Status Dropdown -->
-                        <div class="space-y-xs">
-                            <label class="font-label-md text-label-md text-on-surface block"
-                                for="status">Status</label>
-                            <div class="relative">
-                                <select
-                                    class="w-full appearance-none px-md py-3 rounded-lg border border-outline-variant bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-on-surface cursor-pointer"
-                                    id="status">
-                                    <option value="todo">To Do</option>
-                                    <option selected="" value="inprogress">In Progress</option>
-                                    <option value="review">Under Review</option>
-                                    <option value="completed">Completed</option>
-                                </select>
-                                <span
-                                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-                            </div>
-                        </div>
-                        <!-- Due Date -->
-                        <div class="space-y-xs">
-                            <label class="font-label-md text-label-md text-on-surface block" for="date">Due
-                                Date</label>
-                            <div class="relative">
-                                <input
-                                    class="w-full px-md py-3 rounded-lg border border-outline-variant bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-on-surface"
-                                    id="date" type="date" value="2024-12-24" />
-                            </div>
-                        </div>
-                        <!-- Priority Selection -->
-                        <div class="space-y-xs">
-                            <label class="font-label-md text-label-md text-on-surface block">Priority</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button
-                                    class="py-2 border border-outline-variant rounded-md font-label-sm text-slate-600 hover:bg-slate-50"
-                                    type="button">Low</button>
-                                <button
-                                    class="py-2 border border-outline-variant rounded-md font-label-sm text-slate-600 hover:bg-slate-50"
-                                    type="button">Medium</button>
-                                <button
-                                    class="py-2 bg-error-container text-on-error-container border border-error/20 rounded-md font-label-sm font-bold"
-                                    type="button">High</button>
-                            </div>
+                        <ul class="list-disc list-inside text-sm text-on-error-container space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-green-600 text-xl">check_circle</span>
+                            <span class="font-label-md text-green-700">{{ session('success') }}</span>
                         </div>
                     </div>
-                    <!-- Assignee Card -->
-                    <div
-                        class="bg-surface-container-lowest p-xl rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100/50">
-                        <h4 class="font-label-md text-label-md text-on-surface mb-md">Assignees</h4>
-                        <div class="space-y-md">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <img class="w-8 h-8 rounded-full"
-                                        data-alt="Portrait of a male developer with glasses and a friendly expression in a brightly lit modern workspace"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBL2dNL-ALcMWPQatHHYINlXSbLiBCm1SovsIOW1SaAhMl8XSmHWHmY3mNbaD8MKIO_3DFbdrfbMWbQLi1SSxApClaTq656IBID88qsBV8fZZjq43pY2DTgSdtgRMZJueQYkMypRwAwXjwsK2_QB2A1lLosX2hyWAVDCINYTw0vObdFWqSys-5ldjseii-V_SRnYRLCPmMsWUImZql82rIfC-i9GGf32C-vLoFFeq8Uf4mcmO3aLGRzKPL4uzvp3FLzxZUpbrbBFBm" />
-                                    <span class="font-body-sm font-medium text-on-surface">David Chen</span>
+                @endif
+
+                <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_10px_rgba(49,46,129,0.04)]">
+                    <form method="POST" action="{{ route('tasks.update', $task->id ?? 1) }}" class="space-y-6">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <label class="font-label-md text-label-md text-on-surface block mb-2" for="title">Task Title</label>
+                            <input 
+                                class="w-full px-4 py-3 rounded-xl border bg-white focus:ring-2 transition-all font-body-md text-on-surface @error('title') border-error focus:border-error focus:ring-error/10 @else border-outline-variant focus:border-primary focus:ring-primary/10 @enderror" 
+                                id="title" 
+                                type="text" 
+                                name="title" 
+                                value="{{ old('title', $task->title ?? '') }}"
+                                required 
+                            />
+                            @error('title')
+                                <p class="mt-1 text-sm text-error font-label-sm">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="font-label-md text-label-md text-on-surface block mb-2" for="description">Description</label>
+                            <textarea 
+                                class="w-full px-4 py-3 rounded-xl border bg-white focus:ring-2 transition-all font-body-md text-on-surface resize-none @error('description') border-error focus:border-error focus:ring-error/10 @else border-outline-variant focus:border-primary focus:ring-primary/10 @enderror" 
+                                id="description" 
+                                name="description" 
+                                rows="5"
+                            >{{ old('description', $task->description ?? '') }}</textarea>
+                            @error('description')
+                                <p class="mt-1 text-sm text-error font-label-sm">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="font-label-md text-label-md text-on-surface block mb-2" for="status">Status</label>
+                                <div class="relative">
+                                    <select 
+                                        class="w-full appearance-none px-4 py-3 rounded-xl border bg-white focus:ring-2 transition-all font-body-sm text-on-surface cursor-pointer @error('status') border-error focus:border-error focus:ring-error/10 @else border-outline-variant focus:border-primary focus:ring-primary/10 @enderror" 
+                                        id="status" 
+                                        name="status"
+                                    >
+                                        <option value="todo" {{ old('status', $task->status ?? '') == 'todo' ? 'selected' : '' }}>To Do</option>
+                                        <option value="in_progress" {{ old('status', $task->status ?? '') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="completed" {{ old('status', $task->status ?? '') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                    </select>
+                                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
                                 </div>
-                                <button class="text-error hover:bg-error/10 p-1 rounded transition-colors">
-                                    <span class="material-symbols-outlined text-base">close</span>
+                                @error('status')
+                                    <p class="mt-1 text-sm text-error font-label-sm">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="font-label-md text-label-md text-on-surface block mb-2" for="category_id">Category <span class="text-error">*</span></label>
+                                <div class="relative">
+                                    <select 
+                                        class="w-full appearance-none px-4 py-3 rounded-xl border bg-white focus:ring-2 transition-all font-body-sm text-on-surface cursor-pointer @error('category_id') border-error focus:border-error focus:ring-error/10 @else border-outline-variant focus:border-primary focus:ring-primary/10 @enderror" 
+                                        id="category_id" 
+                                        name="category_id"
+                                        required
+                                    >
+                                        <option value="">Select category</option>
+                                        <option value="1" {{ old('category_id', $task->category_id ?? '') == '1' ? 'selected' : '' }}>Work</option>
+                                        <option value="2" {{ old('category_id', $task->category_id ?? '') == '2' ? 'selected' : '' }}>Personal</option>
+                                        <option value="3" {{ old('category_id', $task->category_id ?? '') == '3' ? 'selected' : '' }}>Shopping</option>
+                                        <option value="4" {{ old('category_id', $task->category_id ?? '') == '4' ? 'selected' : '' }}>Health</option>
+                                        <option value="5" {{ old('category_id', $task->category_id ?? '') == '5' ? 'selected' : '' }}>Education</option>
+                                        <option value="6" {{ old('category_id', $task->category_id ?? '') == '6' ? 'selected' : '' }}>Finance</option>
+                                    </select>
+                                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                                </div>
+                                @error('category_id')
+                                    <p class="mt-1 text-sm text-error font-label-sm">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="font-label-md text-label-md text-on-surface block mb-2" for="due_date">Due Date</label>
+                            <input 
+                                class="w-full px-4 py-3 rounded-xl border bg-white focus:ring-2 transition-all font-body-sm text-on-surface @error('due_date') border-error focus:border-error focus:ring-error/10 @else border-outline-variant focus:border-primary focus:ring-primary/10 @enderror" 
+                                id="due_date" 
+                                type="date" 
+                                name="due_date"
+                                value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d') : '') }}"
+                            />
+                            @error('due_date')
+                                <p class="mt-1 text-sm text-error font-label-sm">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 pt-4">
+                            <button 
+                                type="button"
+                                onclick="window.location.href='{{ route('tasks.index') }}'"
+                                class="flex items-center gap-2 text-error hover:bg-error/10 px-4 py-2 rounded-xl transition-colors font-label-sm"
+                            >
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                                Delete Task
+                            </button>
+                            <div class="flex items-center gap-4">
+                                <button 
+                                    type="button"
+                                    onclick="window.location.href='{{ route('tasks.index') }}'"
+                                    class="px-6 py-3 rounded-xl font-label-md text-slate-600 hover:bg-slate-100 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit"
+                                    class="px-6 py-3 rounded-xl font-label-md bg-primary text-white hover:opacity-90 shadow-md shadow-indigo-900/10 transition-all"
+                                >
+                                    Save Changes
                                 </button>
                             </div>
-                            <button
-                                class="w-full py-2 border-2 border-dashed border-outline-variant rounded-lg flex items-center justify-center gap-2 text-slate-500 hover:text-primary hover:border-primary/50 transition-all font-label-sm">
-                                <span class="material-symbols-outlined text-base">add</span>
-                                Add Collaborator
-                            </button>
                         </div>
-                    </div>
-                </div>
-                <!-- Sticky Footer Actions -->
-                <div class="col-span-12 mt-lg">
-                    <div
-                        class="bg-white/90 backdrop-blur-sm border border-slate-100 rounded-2xl p-md flex items-center justify-between shadow-lg">
-                        <div class="flex items-center gap-md text-slate-500">
-                            <button
-                                class="flex items-center gap-2 hover:text-error transition-colors px-md py-2 rounded-lg hover:bg-error/5"
-                                type="button">
-                                <span class="material-symbols-outlined text-sm">delete</span>
-                                <span class="font-label-sm">Delete Task</span>
-                            </button>
-                        </div>
-                        <div class="flex items-center gap-md">
-                            <button
-                                class="px-xl py-3 rounded-lg font-label-md text-slate-600 hover:bg-slate-100 transition-all active:scale-[0.98]"
-                                onclick="window.location.href='/tasks'">
-                                Cancel
-                            </button>
-                            <button
-                                class="px-xl py-3 rounded-lg font-label-md bg-primary text-white hover:opacity-90 shadow-md shadow-indigo-900/10 transition-all active:scale-[0.98]"
-                                type="submit">
-                                Save Task
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </main>
-    <!-- Project Decorative Element -->
-    <div class="fixed bottom-12 right-12 -z-10 opacity-5 pointer-events-none">
-        <span class="material-symbols-outlined text-[320px]">task_alt</span>
-    </div>
 </body>
 
 </html>

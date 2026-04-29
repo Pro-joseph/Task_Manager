@@ -12,14 +12,16 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 
+
+
 Route::get('/', function () {
     return view('login');
 });
 Route::get('/login', function () {
     return view('login');
 });
-Route::get('/signup', [RegisteredUserController::class, 'create'])->name('register');
-Route::post('/signup', [RegisteredUserController::class, 'store']);
+Route::get('/signup', [RegisteredUserController::class, 'create'])->middleware('guest')->name('register');    
+Route::post('/signup', [RegisteredUserController::class, 'store'])->middleware('guest');
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
@@ -35,18 +37,18 @@ Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $tasks = \App\Models\Task::where('user_id', auth()->id())
+                    ->with('categorie')
+                    ->latest()
+                    ->get();
+        return view('dashboard', compact('tasks'));
     })->name('dashboard');
-    Route::get('/tasks', function () {
-        return view('task');
-    });
-    Route::get('/edit/{id}', function ($id) {
-        return view('edit_task', ['id' => $id]);
-    });
     Route::get('/profile', function () {
         return view('profile.edit');
     });
-    Route::get('/create_task', function () {
-        return view('create_task');
-    });
+    Route::get('/create_task', [TaskController::class, 'create'])->name('tasks.create');
+    Route::get('/edit/{id}', [TaskController::class, 'edit']);
+});
+Route::middleware('auth')->group(function() {
+    Route::resource('tasks', TaskController::class);
 });

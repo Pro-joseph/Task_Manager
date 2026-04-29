@@ -207,6 +207,36 @@
                     </button>
                 </div>
             </div>
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-4 border border-red-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-error text-2xl">warning</span>
+                    </div>
+                    <div>
+                        <p class="text-caption text-slate-500 uppercase">Overdue Tasks</p>
+                        <p class="text-2xl font-bold text-on-surface">{{ $tasks->where('status', 'todo')->count() }}</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-amber-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-amber-600 text-2xl">pending</span>
+                    </div>
+                    <div>
+                        <p class="text-caption text-slate-500 uppercase">In Progress</p>
+                        <p class="text-2xl font-bold text-on-surface">{{ $tasks->where('status', 'in_progress')->count() }}</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-green-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-green-600 text-2xl">task_alt</span>
+                    </div>
+                    <div>
+                        <p class="text-caption text-slate-500 uppercase">Completed Today</p>
+                        <p class="text-2xl font-bold text-on-surface">{{ $tasks->where('status', 'completed')->count() }}</p>
+                    </div>
+                </div>
+            </div>
             <!-- Task List Table -->
             <div
                 class="bg-white rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100 overflow-hidden">
@@ -224,7 +254,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
-                        <!-- Task 1: Overdue -->
+                        @forelse($tasks as $task)
                         <tr class="hover:bg-slate-50/50 transition-colors group">
                             <td class="px-lg py-md">
                                 <div class="flex items-start gap-md">
@@ -233,152 +263,108 @@
                                             type="checkbox" />
                                     </div>
                                     <div>
-                                        <div class="font-label-md text-indigo-900">Q3 System Architecture Audit</div>
-                                        <div class="text-caption text-slate-400">Project: Infrastructure Overhaul</div>
+                                        <div class="font-label-md text-indigo-900">{{ $task->title }}</div>
+                                        <div class="text-caption text-slate-400">{{ $task->description ?? 'No description' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-md py-md">
                                 <span
-                                    class="px-2 py-1 bg-indigo-50 text-indigo-700 text-caption font-semibold rounded-md uppercase tracking-tight">Engineering</span>
+                                    class="px-2 py-1 bg-indigo-50 text-indigo-700 text-caption font-semibold rounded-md uppercase tracking-tight">{{ $task->categorie->nom ?? 'N/A' }}</span>
                             </td>
                             <td class="px-md py-md">
                                 <div class="relative inline-block text-left">
-                                    <button
-                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-error border border-red-100 rounded-lg font-label-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                        To Do
+                                    <button onclick="toggleStatus({{ $task->id }})"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 @if($task->status === 'todo') bg-red-50 text-error border border-red-100 @elseif($task->status === 'in_progress') bg-amber-50 text-amber-700 border border-amber-100 @else bg-green-50 text-green-700 border border-green-100 @endif rounded-lg font-label-sm hover:opacity-80">
+                                        <span class="w-1.5 h-1.5 rounded-full @if($task->status === 'todo') bg-error @elseif($task->status === 'in_progress') bg-amber-500 animate-pulse @else bg-green-500 @endif"></span>
+                                        @if($task->status === 'todo') To Do @elseif($task->status === 'in_progress') In Progress @else Completed @endif
                                         <span class="material-symbols-outlined text-sm">expand_more</span>
                                     </button>
+                                    <div id="status-menu-{{ $task->id }}" class="hidden absolute left-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
+                                        <form method="POST" action="{{ route('tasks.update', $task->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="title" value="{{ $task->title }}">
+                                            <input type="hidden" name="description" value="{{ $task->description }}">
+                                            <input type="hidden" name="category_id" value="{{ $task->category_id }}">
+                                            <input type="hidden" name="due_date" value="{{ $task->due_date }}">
+                                            <input type="hidden" name="status" value="todo">
+                                            <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-red-50 @if($task->status === 'todo') bg-red-50 text-error @endif">
+                                                <span class="w-2 h-2 rounded-full bg-error"></span>
+                                                To Do
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('tasks.update', $task->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="title" value="{{ $task->title }}">
+                                            <input type="hidden" name="description" value="{{ $task->description }}">
+                                            <input type="hidden" name="category_id" value="{{ $task->category_id }}">
+                                            <input type="hidden" name="due_date" value="{{ $task->due_date }}">
+                                            <input type="hidden" name="status" value="in_progress">
+                                            <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 @if($task->status === 'in_progress') bg-amber-50 text-amber-700 @endif">
+                                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                                In Progress
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('tasks.update', $task->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="title" value="{{ $task->title }}">
+                                            <input type="hidden" name="description" value="{{ $task->description }}">
+                                            <input type="hidden" name="category_id" value="{{ $task->category_id }}">
+                                            <input type="hidden" name="due_date" value="{{ $task->due_date }}">
+                                            <input type="hidden" name="status" value="completed">
+                                            <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-green-50 @if($task->status === 'completed') bg-green-50 text-green-700 @endif">
+                                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                                Completed
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-md py-md">
-                                <div class="font-label-sm text-error flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-sm">event_busy</span>
-                                    Oct 12, 2023
+                                <div class="font-label-sm @if($task->status === 'todo') text-error flex items-center gap-1 @else text-slate-500 @endif">
+                                    @if($task->status === 'todo')
+                                        <span class="material-symbols-outlined text-sm">event_busy</span>
+                                    @endif
+                                    {{ $task->created_at->format('M d, Y') }}
                                 </div>
                             </td>
                             <td class="px-lg py-md text-right">
-                                <button class="p-1.5 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Task 2: In Progress -->
-                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                            <td class="px-lg py-md">
-                                <div class="flex items-start gap-md">
-                                    <div class="mt-1">
-                                        <input class="rounded text-primary focus:ring-primary border-slate-300"
-                                            type="checkbox" />
-                                    </div>
-                                    <div>
-                                        <div class="font-label-md text-indigo-900">Finalize Brand Identity Guidelines
-                                        </div>
-                                        <div class="text-caption text-slate-400">Project: Brand Refresh</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-md py-md">
-                                <span
-                                    class="px-2 py-1 bg-amber-50 text-amber-700 text-caption font-semibold rounded-md uppercase tracking-tight">Design</span>
-                            </td>
-                            <td class="px-md py-md">
-                                <button
-                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-100 rounded-lg font-label-sm">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                    In Progress
-                                    <span class="material-symbols-outlined text-sm">expand_more</span>
-                                </button>
-                            </td>
-                            <td class="px-md py-md">
-                                <div class="font-label-sm text-slate-500">Oct 24, 2023</div>
-                            </td>
-                            <td class="px-lg py-md text-right">
-                                <button class="p-1.5 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Task 3: In Review -->
-                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                            <td class="px-lg py-md">
-                                <div class="flex items-start gap-md">
-                                    <div class="mt-1">
-                                        <input class="rounded text-primary focus:ring-primary border-slate-300"
-                                            type="checkbox" />
-                                    </div>
-                                    <div>
-                                        <div class="font-label-md text-indigo-900">API Documentation V2 Draft</div>
-                                        <div class="text-caption text-slate-400">Project: Developer Experience</div>
+                                <div class="relative inline-block text-left">
+                                    <button onclick="toggleMenu({{ $task->id }})" class="p-1.5 text-slate-400 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">more_vert</span>
+                                    </button>
+                                    <div id="menu-{{ $task->id }}" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
+                                        <a href="{{ route('tasks.edit', $task->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                            Edit
+                                        </a>
+                                        <form method="POST" action="{{ route('tasks.destroy', $task->id) }}" onsubmit="return confirm('Are you sure?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-error hover:bg-red-50">
+                                                <span class="material-symbols-outlined text-lg">delete</span>
+                                                Delete
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-md py-md">
-                                <span
-                                    class="px-2 py-1 bg-indigo-50 text-indigo-700 text-caption font-semibold rounded-md uppercase tracking-tight">Engineering</span>
-                            </td>
-                            <td class="px-md py-md">
-                                <button
-                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg font-label-sm">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                    Review
-                                    <span class="material-symbols-outlined text-sm">expand_more</span>
-                                </button>
-                            </td>
-                            <td class="px-md py-md">
-                                <div class="font-label-sm text-slate-500">Oct 26, 2023</div>
-                            </td>
-                            <td class="px-lg py-md text-right">
-                                <button class="p-1.5 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
                         </tr>
-                        <!-- Task 4: Done -->
-                        <tr class="hover:bg-slate-50/50 transition-colors group opacity-60">
-                            <td class="px-lg py-md">
-                                <div class="flex items-start gap-md">
-                                    <div class="mt-1">
-                                        <input checked=""
-                                            class="rounded text-primary focus:ring-primary border-slate-300"
-                                            type="checkbox" />
-                                    </div>
-                                    <div>
-                                        <div class="font-label-md text-indigo-900 line-through">Employee Onboarding
-                                            Flow</div>
-                                        <div class="text-caption text-slate-400">Project: Operations HR</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-md py-md">
-                                <span
-                                    class="px-2 py-1 bg-slate-100 text-slate-600 text-caption font-semibold rounded-md uppercase tracking-tight">Operations</span>
-                            </td>
-                            <td class="px-md py-md">
-                                <button
-                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg font-label-sm">
-                                    <span class="material-symbols-outlined text-xs">check_circle</span>
-                                    Done
-                                    <span class="material-symbols-outlined text-sm">expand_more</span>
-                                </button>
-                            </td>
-                            <td class="px-md py-md">
-                                <div class="font-label-sm text-slate-500">Oct 20, 2023</div>
-                            </td>
-                            <td class="px-lg py-md text-right">
-                                <button class="p-1.5 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-lg py-8 text-center text-slate-500">No tasks found. Create a new task!</td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
                 <!-- Pagination -->
                 <div class="px-lg py-md bg-slate-50/30 flex items-center justify-between border-t border-slate-100">
                     <div class="text-caption text-slate-400">
-                        Showing <span class="font-semibold text-slate-600">1 to 4</span> of <span
-                            class="font-semibold text-slate-600">24</span> tasks
+                        Showing <span class="font-semibold text-slate-600">1 to {{ $tasks->count() }}</span> of <span
+                            class="font-semibold text-slate-600">{{ $tasks->count() }}</span> tasks
                     </div>
                     <div class="flex items-center gap-xs">
                         <button
@@ -402,44 +388,42 @@
                     </div>
                 </div>
             </div>
-            <!-- Quick Stats Section -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mt-xl">
-                <div
-                    class="bg-white p-lg rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100 border-l-4 border-error">
-                    <div class="text-caption text-slate-500 uppercase tracking-widest font-semibold mb-xs">Overdue
-                        Tasks</div>
-                    <div class="flex items-end justify-between">
-                        <span class="font-h2 text-indigo-900">3</span>
-                        <div class="h-8 w-12 bg-red-50 flex items-center justify-center rounded">
-                            <span class="material-symbols-outlined text-error text-xl">warning</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white p-lg rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100 border-l-4 border-amber-500">
-                    <div class="text-caption text-slate-500 uppercase tracking-widest font-semibold mb-xs">In Progress
-                    </div>
-                    <div class="flex items-end justify-between">
-                        <span class="font-h2 text-indigo-900">8</span>
-                        <div class="h-8 w-12 bg-amber-50 flex items-center justify-center rounded">
-                            <span class="material-symbols-outlined text-amber-600 text-xl">pending</span>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white p-lg rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] border border-slate-100 border-l-4 border-emerald-500">
-                    <div class="text-caption text-slate-500 uppercase tracking-widest font-semibold mb-xs">Completed
-                        Today</div>
-                    <div class="flex items-end justify-between">
-                        <span class="font-h2 text-indigo-900">12</span>
-                        <div class="h-8 w-12 bg-emerald-50 flex items-center justify-center rounded">
-                            <span class="material-symbols-outlined text-emerald-600 text-xl">task_alt</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
+    <script>
+        function toggleMenu(id) {
+            document.querySelectorAll('[id^="menu-"]').forEach(menu => {
+                if (menu.id !== 'menu-' + id) {
+                    menu.classList.add('hidden');
+                }
+            });
+            const menu = document.getElementById('menu-' + id);
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleStatus(id) {
+            document.querySelectorAll('[id^="status-menu-"]').forEach(menu => {
+                if (menu.id !== 'status-menu-' + id) {
+                    menu.classList.add('hidden');
+                }
+            });
+            const menu = document.getElementById('status-menu-' + id);
+            menu.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('[onclick^="toggleMenu"]') && !event.target.closest('[id^="menu-"]')) {
+                document.querySelectorAll('[id^="menu-"]').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+            if (!event.target.closest('[onclick^="toggleStatus"]') && !event.target.closest('[id^="status-menu-"]')) {
+                document.querySelectorAll('[id^="status-menu-"]').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

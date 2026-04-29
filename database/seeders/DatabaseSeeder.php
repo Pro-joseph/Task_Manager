@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Category;
+use App\Models\Task;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -10,16 +12,28 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $user = User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            ['name' => 'Joseph Dira']
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $categoryNames = ['Work', 'Personal', 'Shopping', 'Health', 'Education', 'Finance'];
+        foreach ($categoryNames as $name) {
+            Category::firstOrCreate(
+                ['user_id' => $user->id, 'nom' => $name],
+                ['user_id' => $user->id, 'nom' => $name]
+            );
+        }
+
+        $categories = Category::where('user_id', $user->id)->get();
+
+        Task::factory()
+            ->count(15)
+            ->create([
+                'user_id' => $user->id,
+                'category_id' => $categories->random()->id,
+            ]);
     }
 }
