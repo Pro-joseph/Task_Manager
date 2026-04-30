@@ -13,13 +13,17 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 
 
-
 Route::get('/', function () {
     return view('login');
 });
 Route::get('/login', function () {
     return view('login');
 });
+Route::get('/test', function () {
+    return view('testblade');
+});
+
+
 Route::get('/signup', [RegisteredUserController::class, 'create'])->middleware('guest')->name('register');    
 Route::post('/signup', [RegisteredUserController::class, 'store'])->middleware('guest');
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
@@ -37,11 +41,12 @@ Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
+        $currentUser = auth()->user();
         $tasks = \App\Models\Task::where('user_id', auth()->id())
                     ->with('categorie')
                     ->latest()
                     ->get();
-        return view('dashboard', compact('tasks'));
+        return view('dashboard', compact('tasks', 'currentUser'));
     })->name('dashboard');
     Route::get('/profile', function () {
         return view('profile.edit');

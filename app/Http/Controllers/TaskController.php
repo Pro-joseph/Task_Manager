@@ -2,39 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\task;
+use App\Models\Task;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+      private function authorizeTask(Task $task)
+    {
+        if ($task->user_id !== auth()->id()) {
+            abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = \App\Models\Task::where('user_id', auth()->id())
-                    ->with('categorie')
-                    ->latest()
-                    ->get();
-        return view('task', compact('tasks'));
+        $query = Task::where('user_id', auth()->id())
+                    ->with('categorie');
+
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('category') && $request->category !== '') {
+            $query->where('category_id', $request->category);
+        }
+
+        $tasks = $query->latest()->get();
+        $categories = Category::all();
+        
+        return view('task', compact('tasks', 'categories'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    $categories = Category::all();
-    return view('create_task', compact('categories'));
-}
+    {
+        $categories = Category::all();
+        return view('create_task', compact('categories'));
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $validated = $request->validate([
+    {
+        $validated = $request->validate([
         'title'        => 'required|string|max:255',
         'description'  => 'nullable|string',
         'category_id' => 'required|integer',
@@ -70,6 +87,8 @@ class TaskController extends Controller
      */
 public function edit(task $task)
 {
+        $this->authorizeTask($task);
+
     $categories = Category::all();
     return view('edit_task', compact('task', 'categories'));
 }
@@ -79,6 +98,8 @@ public function edit(task $task)
      */
     public function update(Request $request, task $task)
     {
+            $this->authorizeTask($task);
+
         $validated = $request->validate([
             'title'        => 'required|string|max:255',
             'description'  => 'nullable|string',
@@ -103,8 +124,13 @@ public function edit(task $task)
      */
     public function destroy(task $task)
     {
+            $this->authorizeTask($task);
+
         $task->delete();
         return redirect()->route('tasks.index')
                    ->with('success', 'Task deleted successfully!');
     }
+
+    
+
 }
