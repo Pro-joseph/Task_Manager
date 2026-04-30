@@ -21,40 +21,34 @@
         </div>
 
         <!-- Filters Bar -->
-        <div class="bg-white rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] p-4 mb-6 flex flex-wrap items-center justify-between gap-4 border border-slate-100">
+        <form method="GET" action="{{ route('tasks.index') }}" class="bg-white rounded-xl shadow-[0_2px_10px_rgba(49,46,129,0.04)] p-4 mb-6 flex flex-wrap items-center justify-between gap-4 border border-slate-100">
             <div class="flex items-center gap-4 flex-wrap">
                 <div class="flex items-center gap-2">
                     <span class="font-label-sm text-slate-400 uppercase tracking-wider">Status:</span>
-                    <select class="border-slate-200 rounded-lg font-label-sm text-slate-600 focus:ring-primary focus:border-primary">
-                        <option>All Statuses</option>
-                        <option>To Do</option>
-                        <option>In Progress</option>
-                        <option>Review</option>
-                        <option>Done</option>
+                    <select name="status" onchange="this.form.submit()" class="border-slate-200 rounded-lg font-label-sm text-slate-600 focus:ring-primary focus:border-primary">
+                        <option value="">All Statuses</option>
+                        <option value="todo" {{ request('status') === 'todo' ? 'selected' : '' }}>To Do</option>
+                        <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-2 border-l border-slate-100 pl-4">
                     <span class="font-label-sm text-slate-400 uppercase tracking-wider">Category:</span>
-                    <select class="border-slate-200 rounded-lg font-label-sm text-slate-600 focus:ring-primary focus:border-primary">
-                        <option>All Categories</option>
-                        <option>Engineering</option>
-                        <option>Design</option>
-                        <option>Marketing</option>
-                        <option>Operations</option>
+                    <select name="category" onchange="this.form.submit()" class="border-slate-200 rounded-lg font-label-sm text-slate-600 focus:ring-primary focus:border-primary">
+                        <option value="">All Categories</option>
+                        @foreach($categories ?? [] as $cat)
+                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->nom }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button class="flex items-center gap-2 text-slate-500 font-label-sm px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <a href="{{ route('tasks.index') }}" class="flex items-center gap-2 text-slate-500 font-label-sm px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
                     <span class="material-symbols-outlined text-base">filter_list</span>
-                    More Filters
-                </button>
-                <button class="flex items-center gap-2 text-slate-500 font-label-sm px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                    <span class="material-symbols-outlined text-base">sort</span>
-                    Sort By
-                </button>
+                    Clear
+                </a>
             </div>
-        </div>
+        </form>
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -180,19 +174,19 @@
                                     {{ $task->created_at->format('M d, Y') }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-right" style="position: static;">
                                 <div class="relative inline-block text-left">
-                                    <button onclick="toggleMenu({{ $task->id }})" class="p-1.5 text-slate-400 hover:text-primary transition-colors">
+                                    <button type="button" onclick="toggleMenu({{ $task->id }})" class="p-1.5 text-slate-400 hover:text-primary transition-colors cursor-pointer" style="position: relative; z-index: 60;">
                                         <span class="material-symbols-outlined">more_vert</span>
                                     </button>
-                                    <div id="menu-{{ $task->id }}" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
-                                        <a href="{{ route('tasks.edit', $task->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <div id="menu-{{ $task->id }}" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-slate-100 py-1" style="z-index: 100;">
+                                        <a href="{{ route('tasks.edit', $task->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700">
                                             <span class="material-symbols-outlined text-lg">edit</span>
                                             Edit
                                         </a>
                                         <form method="POST" action="{{ route('tasks.destroy', $task->id) }}" onsubmit="return confirm('Are you sure?')">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-error hover:bg-red-50">
+                                            <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-error">
                                                 <span class="material-symbols-outlined text-lg">delete</span>
                                                 Delete
                                             </button>

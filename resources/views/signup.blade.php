@@ -14,6 +14,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
+    <link href="stylesheet" href="../../css/styles.css" />
     <script>
         tailwind.config = {
             theme: {
@@ -48,8 +49,78 @@
                     "color": {
                         "primary": "#1a146b",
                         "on-primary": "#ffffff",
-                        "primary-container": "#dce9ff",             
-    </head>
+                        "primary-container": "#dce9ff",
+                        "on-primary-container": "#1a146b",
+                        "secondary": "#4a4a4a",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#f0f0f0",
+                        "on-secondary-container": "#4a4a4a",
+                        "tertiary": "#047857",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#d1fae5",
+                        "on-tertiary-container": "#047857",
+                        "error": "#b91c1c",
+                        "on-error": "#ffffff",
+                        "error-container": "#fee2e2",
+                        "on-error-container": "#b91c1c",
+                        "background": "#f8f9ff",
+                        "on-background": "#111827",
+                        "surface": "#ffffff",
+                        "on-surface": "#111827"
+
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        h1: ["Inter", "sans-serif"],
+                        h2: ["Inter", "sans-serif"],
+                        h3: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        label: ["Inter", "sans-serif"],
+                        caption: ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        h1: ["36px", {
+                            lineHeight: "1.2",
+                            letterSpacing: "-0.02em",
+                            fontWeight: "700"
+                        }],
+                        h2: ["30px", {
+                            lineHeight: "1.3",
+                            letterSpacing: "-0.01em",
+                            fontWeight: "600"
+                        }],
+                        h3: ["24px", {
+                            lineHeight: "1.3",
+                            fontWeight: "600"
+                        }],
+                        body: ["16px", {
+                            lineHeight: "1.5",
+                            fontWeight: "400"
+                        }],
+                        label: ["14px", {
+                            lineHeight: "1",
+                            fontWeight: "600"
+                        }],
+                        caption: ["12px", {
+                            lineHeight: "1",
+                            letterSpacing: "0.02em",
+                            fontWeight: "500"
+                        }]
+                    }
+                }
+            }
+        }
+    </script>
+
+
+</head>
 
 <body
     class="bg-background font-body-md text-on-background min-h-screen flex items-center justify-center overflow-x-hidden">
@@ -170,7 +241,8 @@
                             class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock_reset</span>
                         <input
                             class="w-full pl-12 pr-12 py-3 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-body-sm transition-all duration-200"
-                            id="password_confirmation" placeholder="••••••••" type="password" name="password_confirmation" />
+                            id="password_confirmation" placeholder="••••••••" type="password"
+                            name="password_confirmation" />
                     </div>
                 </div>
 
