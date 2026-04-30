@@ -51,9 +51,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', function () {
         return view('profile.edit');
     });
-    Route::get('/create_task', [TaskController::class, 'create'])->name('tasks.create');
-    Route::get('/edit/{id}', [TaskController::class, 'edit']);
-});
-Route::middleware('auth')->group(function() {
     Route::resource('tasks', TaskController::class);
 });

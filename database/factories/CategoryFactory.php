@@ -14,7 +14,7 @@ class CategoryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->unique()->word(),
+            'nom' => $this->faker->unique()->word(),
         ];
     }
 }
